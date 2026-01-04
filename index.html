@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Happy Birthday, Amilatus</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,7 +14,6 @@
     <style>
         /* --- VARIABLES & RESET --- */
         :root {
-            /* Changed gradient slightly to match 'Mrs Magic' dreamy vibe */
             --bg-gradient: linear-gradient(125deg, #a18cd1 0%, #fbc2eb 100%);
             --glass-bg: rgba(255, 255, 255, 0.25);
             --glass-border: rgba(255, 255, 255, 0.5);
@@ -30,14 +29,21 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            /* Prevents blue highlight on tap on Android */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            /* Fix for mobile address bar jumps */
+            height: 100dvh; 
+            overflow: hidden; /* STRICTLY prevent scrolling */
+            position: fixed; /* Locks the body in place */
         }
 
         body {
             font-family: var(--font-main);
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            /* Dreamy sunset colors for the song */
             background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #a18cd1, #fbc2eb);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
@@ -86,7 +92,7 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            z-index: 100;
+            z-index: 1000; /* Extremely high z-index to stay on top */
             background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.6);
@@ -101,6 +107,8 @@
             font-size: 1.2rem;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            /* Prevents double-tap zoom on mobile */
+            touch-action: manipulation; 
         }
 
         .music-control:hover {
@@ -114,6 +122,8 @@
             z-index: 10;
             width: 90%;
             max-width: 550px; 
+            /* Use dvh for height to fit mobile screens perfectly without scroll */
+            height: 60dvh; 
             min-height: 450px; 
             display: flex;
             justify-content: center;
@@ -210,6 +220,8 @@
             display: inline-flex;
             align-items: center;
             gap: 12px;
+            /* Prevents zoom issues on mobile */
+            touch-action: manipulation;
         }
 
         .btn:hover {
@@ -249,6 +261,7 @@
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: none;
             margin: 0 auto;
+            touch-action: manipulation;
         }
 
         .icon-btn:hover {
@@ -271,6 +284,7 @@
             width: 0;
             height: 0;
             pointer-events: none;
+            z-index: 20; /* Ensure confetti is visible */
         }
         
         .confetti-piece {
@@ -307,11 +321,32 @@
             opacity: 0.9;
         }
 
-        @media (max-width: 480px) {
+        /* --- MOBILE RESPONSIVE TWEAKS --- */
+        @media (max-width: 600px) {
+            .card-container {
+                width: 92%;
+                min-height: 400px; /* Reduced min-height to fit smaller screens */
+            }
+
+            section {
+                padding: 1.5rem; /* Less padding on mobile */
+            }
+
             h1 { font-size: 2rem; }
-            p { font-size: 1.1rem; }
-            .card-container { width: 95%; }
-            section { padding: 2rem; }
+            h2 { font-size: 1.6rem; }
+            p { font-size: 1.1rem; line-height: 1.5; margin-bottom: 1.2rem; }
+            
+            .btn {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+
+            .music-control {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+            }
         }
     </style>
 </head>
@@ -416,7 +451,7 @@
         let isPlaying = false;
 
         // Set volume low for "cozy" vibe
-        music.volume = 0.6; // Slightly louder for Mrs Magic
+        music.volume = 0.6; 
 
         // Special Start Function (Triggers Music + Section Transition)
         function startExperience() {
